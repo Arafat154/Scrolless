@@ -50,4 +50,15 @@
     <string name="settings_include_stories_title">Include Stories</string>
     <string name="settings_include_stories_description">Count time spent viewing Stories and apply your current blocking mode and limits.</string>
     <string name="settings_include_stories_note">Currently supported on Instagram, Snapchat, and Facebook.</string>
+
+    <string name="settings_section_protection">Protection</string>
+    <string name="settings_prevent_uninstall_title">Prevent uninstall</string>
+    <string name="settings_prevent_uninstall_description">Make Scrolless harder to remove on impulse. Android will refuse to uninstall it until you turn this off.</string>
+    <string name="settings_prevent_uninstall_note">Uses Android Device Admin. Scrolless gets no other control over your device or data.</string>
+    <string name="device_admin_explanation">Activating this stops Scrolless from being uninstalled until you deactivate it here first. It does not give Scrolless any other control over your device.</string>
+    <string name="device_admin_disable_warning">Scrolless will no longer be protected from being uninstalled.</string>
+    <string name="device_admin_disable_dialog_title">Turn off uninstall protection?</string>
+    <string name="device_admin_disable_dialog_message">Scrolless will be able to be uninstalled again. Are you sure you want to turn this off?</string>
+    <string name="device_admin_disable_dialog_confirm">Turn off</string>
+    <string name="device_admin_disable_dialog_cancel">Keep protection</string>
 </resources>
