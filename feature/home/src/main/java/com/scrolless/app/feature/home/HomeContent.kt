@@ -84,7 +84,8 @@ internal fun HomeContent(
 ) {
     val pauseRemainingMillis = rememberPauseRemainingTime(uiState.pauseUntilMillis)
     val isPauseActive = pauseRemainingMillis > 0L
-    val showDebugPanel = BuildConfig.DEBUG || LocalInspectionMode.current
+    // Developer tools stay hidden in installed builds (including debug builds); previews still show them.
+    val showDebugPanel = LocalInspectionMode.current
     var isDebugExpanded by remember { mutableStateOf(false) }
     var sessionChunksExpanded by remember(uiState.usageAnalytics.selectedDate) { mutableStateOf(false) }
 
