@@ -17,10 +17,12 @@
 package com.scrolless.app.feature.home
 
 import android.accessibilityservice.AccessibilityService
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.provider.Settings
+import timber.log.Timber
 
 internal fun Context.isAccessibilityServiceEnabled(service: Class<out AccessibilityService>?): Boolean {
     if (service == null) return false
@@ -40,7 +42,20 @@ internal fun Context.openActivityAccessibilitySettings() {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
     }
-    startActivity(intent)
+    try {
+        startActivity(intent)
+    } catch (e: ActivityNotFoundException) {
+        Timber.w(e, "Accessibility settings screen not available")
+        // Some Android TV firmwares don't expose the accessibility screen directly,
+        // so fall back to the main settings screen where the user can find it.
+        val fallback = Intent(Settings.ACTION_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        try {
+            startActivity(fallback)
+        } catch (e2: ActivityNotFoundException) {
+            // Nothing else we can open; the in-app instructions still apply.
+            Timber.w(e2, "No settings screen available")
+        }
+    }
 }
 
 private val Context.isDebuggable: Boolean

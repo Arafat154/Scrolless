@@ -16,16 +16,25 @@
  */
 package com.scrolless.app.ui
 
+import android.app.UiModeManager
+import android.content.Context
+import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
@@ -52,6 +61,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
+        val isTelevision = isTelevisionDevice()
+
         setContent {
 
             val appState: ScrollessAppState = rememberScrollessAppState()
@@ -63,7 +74,7 @@ class MainActivity : ComponentActivity() {
                 darkTheme = themeMode.resolveDarkTheme(),
                 dynamicColor = dynamicColorEnabled,
             ) {
-                SharedTransitionLayout {
+                SharedTransitionLayout(modifier = Modifier.tvSafeArea(isTelevision)) {
                     CompositionLocalProvider(LocalSharedTransitionScope provides this) {
                         NavDisplay(
                             appState.backStack,
@@ -92,6 +103,27 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+}
+
+/** True when running on Android TV / Google TV (UI mode, with the Leanback feature as a fallback). */
+private fun Context.isTelevisionDevice(): Boolean {
+    val uiModeManager = getSystemService(Context.UI_MODE_SERVICE) as? UiModeManager
+    return uiModeManager?.currentModeType == Configuration.UI_MODE_TYPE_TELEVISION ||
+        packageManager.hasSystemFeature(PackageManager.FEATURE_LEANBACK)
+}
+
+/**
+ * Keeps content inside the TV "safe area" so nothing is cut off by TV overscan.
+ * Uses the 5% margins recommended for TV layouts (48dp sides, 27dp top and bottom).
+ */
+@Composable
+private fun Modifier.tvSafeArea(isTelevision: Boolean): Modifier = if (isTelevision) {
+    // Paint the theme background first so the margins match the screens inside them.
+    this
+        .background(MaterialTheme.colorScheme.background)
+        .padding(horizontal = 48.dp, vertical = 27.dp)
+} else {
+    this
 }
 
 /**
